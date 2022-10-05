@@ -24,7 +24,7 @@ const createCategory = catchAsync(async (req, res, next) => {
 });
 
 const updateCategory = catchAsync(async (req, res, next) => {
-  const { newName } = req.body;
+  const { name } = req.body;
   const { id } = req.params;
 
   const category = await Category.findOne({
@@ -35,13 +35,13 @@ const updateCategory = catchAsync(async (req, res, next) => {
     return next(new AppError('Category does not exits with given id', 404));
   }
 
-  if (newName.length === 0) {
+  if (name.length === 0) {
     return next(new AppError('The updated name cannot be empty', 400));
   }
 
-  await category.update({ name: newName });
+  await category.update({ name: name });
 
-  res.status(200).json({ status: 'success' });
+  res.status(200).json({ status: 'success', data: name });
 });
 
 module.exports = {

@@ -47,10 +47,9 @@ productsRouter.post('/categories', createCategory);
 
 productsRouter.patch('/categories/:id', updateCategory);
 
-productsRouter
-  .use('/:id', productExists)
-  .route('/:id')
-  .patch(protectProductOwner, updateProduct)
-  .delete(protectProductOwner, deleteProduct);
+productsRouter.use('/:id', productExists);
+productsRouter.route('/:id');
+productsRouter.patch('/:id', protectProductOwner, updateProduct);
+productsRouter.delete('/:id', protectProductOwner, deleteProduct);
 
 module.exports = { productsRouter };

@@ -4,6 +4,11 @@ const { catchAsync } = require('../utils/catchAsync.util');
 const { AppError } = require('../utils/appError.util');
 
 const protectProductOwner = catchAsync(async (req, res, next) => {
+  const { sessionUser, userId } = req;
+
+  if (sessionUser.id !== userId) {
+    return next(new AppError('You do not own this account', 403));
+  }
   next();
 });
 
