@@ -2,11 +2,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
-// Models
 const { User } = require('../models/user.model');
 const { Product } = require('../models/product.model');
+const { Order } = require('../models/order.model');
 
-// Utils
 const { catchAsync } = require('../utils/catchAsync.util');
 const { AppError } = require('../utils/appError.util');
 
@@ -51,11 +50,11 @@ const getUserById = catchAsync(async (req, res, next) => {
 
 const updateUser = catchAsync(async (req, res, next) => {
   const { user } = req;
-  const { name } = req.body;
+  const { name, email } = req.body;
 
-  await user.update({ name });
+  await user.update({ name, email });
 
-  res.status(200).json({ status: 'success' });
+  res.status(200).json({ status: 'success', data: user });
 });
 
 const deleteUser = catchAsync(async (req, res, next) => {
@@ -96,15 +95,37 @@ const checkToken = catchAsync(async (req, res, next) => {
 });
 
 const getUserProducts = catchAsync(async (req, res, next) => {
-  res.status(200).json({ status: 'success' });
+  const { sessionUser } = req;
+
+  const products = await Product.findAll({
+    where: { userId: sessionUser.id },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: { products },
+  });
 });
 
 const getUserOrders = catchAsync(async (req, res, next) => {
-  res.status(200).json({ status: 'success' });
+  const { sessionUser } = req;
+
+  const orders = await Order.findAll({
+    where: { userId: sessionUser.id },
+  });
+
+  res.status(200).json({ status: 'success', data: { orders } });
 });
 
 const getUserOrderById = catchAsync(async (req, res, next) => {
-  res.status(200).json({ status: 'success' });
+  const { sessionUser } = req;
+  const { id } = req.params;
+
+  const order = await Order.findOne({
+    where: { userId: sessionUser.id, id },
+  });
+
+  res.status(200).json({ status: 'success', data: { order } });
 });
 
 module.exports = {
