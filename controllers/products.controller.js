@@ -3,6 +3,7 @@ const { Category } = require('../models/category.model');
 const { User } = require('../models/user.model');
 
 const { catchAsync } = require('../utils/catchAsync.util');
+const { uploadProductImgs } = require('../utils/firebase.util');
 
 const getAllProducts = catchAsync(async (req, res, next) => {
   const products = await Product.findAll({
@@ -34,6 +35,8 @@ const createProduct = catchAsync(async (req, res, next) => {
     price,
     userId: sessionUser.id,
   });
+
+  await uploadProductImgs(req.files, newProduct.id);
 
   res.status(201).json({ newProduct });
 });
